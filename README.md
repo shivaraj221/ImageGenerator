@@ -183,6 +183,5 @@ Remember that AI image generation uses cloud resources, and free tiers have limi
 
 Now you're ready to create! Open your browser, type your imagination into words, and watch as AI brings your ideas to life.
 
----
 
-*Created with simplicity in mind - no complex setup, no confusing options, just creative freedom.*
+
