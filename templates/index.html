@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 AI Image Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .status-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+        
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+        
+        select, textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid #334155;
+            border-radius: 10px;
+            color: #f1f5f9;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            width: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(96, 165, 250, 0.2);
+            border-top: 4px solid #60a5fa;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 30px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            border: 2px dashed #334155;
+            margin-top: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-container.has-image {
+            border-color: #10b981;
+            background: rgba(15, 23, 42, 0.3);
+        }
+        
+        #generatedImage {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .model-card {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .model-card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+        }
+        
+        .model-card.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .model-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #60a5fa;
+            font-size: 1.1em;
+        }
+        
+        .model-info {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast.success { border-left-color: #10b981; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.info { border-left-color: #60a5fa; }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 AI Image Generator</h1>
+            <p class="subtitle">Generate stunning images with AI - Powered by nscale</p>
+            <div id="globalStatus" class="status-badge status-warning">Checking status...</div>
+        </header>
+        
+        <div class="card">
+            <h2>📊 System Status</h2>
+            <div id="modelsStatus"></div>
+        </div>
+        
+        <div class="card">
+            <h2>🎨 Generate Image</h2>
+            
+            <div class="form-group">
+                <label>Select Model:</label>
+                <div class="models-grid" id="modelsGrid">
+                    <!-- Models will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Prompt:</label>
+                <textarea id="prompt" placeholder="Describe your image in detail... Example: A majestic dragon flying over ancient ruins at sunset, digital art, cinematic lighting, 8k resolution"></textarea>
+            </div>
+            
+            <button id="generateBtn" class="btn" onclick="generateImage()">
+                <span>⚡</span> Generate Image
+            </button>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <h3>Generating Image...</h3>
+                <p>This usually takes 10-30 seconds</p>
+                <p id="timer" style="color: #60a5fa; margin-top: 10px;">0s elapsed</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>🖼️ Generated Image</h2>
+            <div class="result-container" id="resultContainer">
+                <div id="noImage">
+                    <div style="font-size: 64px; margin: 20px;">🎨</div>
+                    <h3>No Image Generated Yet</h3>
+                    <p>Select a model, enter a prompt, and click "Generate"</p>
+                </div>
+                <img id="generatedImage" alt="Generated image">
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button id="downloadBtn" class="btn btn-success" onclick="downloadImage()" style="display: none; flex: 1;">
+                    <span>⬇️</span> Download PNG
+                </button>
+                <button id="regenerateBtn" class="btn btn-secondary" onclick="regenerateImage()" style="display: none; flex: 1;">
+                    <span>🔄</span> Regenerate
+                </button>
+            </div>
+            
+            <div id="generationInfo" style="display: none; margin-top: 20px; padding: 15px; background: rgba(15, 23, 42, 0.5); border-radius: 10px;">
+                <h4>📊 Generation Details</h4>
+                <div id="infoDetails"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // Global variables
+        let currentImageUrl = null;
+        let currentPrompt = "";
+        let currentModel = "flux-schnell";
+        let startTime = 0;
+        let timerInterval = null;
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkStatus();
+            loadModels();
+        });
+        
+        // Utility functions
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 4000);
+        }
+        
+        function startTimer() {
+            startTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+                document.getElementById('timer').textContent = elapsed + 's elapsed';
+            }, 100);
+        }
+        
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        // API functions
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('globalStatus');
+                statusEl.textContent = data.status;
+                statusEl.className = `status-badge ${data.ready ? 'status-success' : 'status-error'}`;
+                
+            } catch (error) {
+                document.getElementById('globalStatus').textContent = '❌ Cannot connect to server';
+                document.getElementById('globalStatus').className = 'status-badge status-error';
+            }
+        }
+        
+        async function loadModels() {
+            try {
+                const response = await fetch('/api/models');
+                const data = await response.json();
+                
+                const modelsGrid = document.getElementById('modelsGrid');
+                let html = '';
+                
+                // Model descriptions
+                const modelInfo = {
+                    'flux-schnell': {
+                        name: 'FLUX.1 Schnell',
+                        description: 'Fast generation, good quality',
+                        provider: 'nscale'
+                    },
+                    'sd-xl': {
+                        name: 'Stable Diffusion XL',
+                        description: 'High quality images',
+                        provider: 'nscale'
+                    }
+                };
+                
+                for (const [key, info] of Object.entries(data.models)) {
+                    const isAvailable = data.clients[info.client] === true;
+                    const modelData = modelInfo[key] || {name: key, description: info.model, provider: info.client};
+                    
+                    html += `
+                        <div class="model-card ${key === currentModel ? 'selected' : ''} ${!isAvailable ? 'disabled' : ''}" 
+                              onclick="${isAvailable ? `selectModel('${key}')` : ''}"
+                              style="${!isAvailable ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                            <div class="model-name">${modelData.name}</div>
+                            <div class="model-info">${modelData.description}</div>
+                            <div class="model-info" style="margin-top: 5px; font-size: 0.8em;">
+                                Provider: ${modelData.provider} 
+                                <span style="color: ${isAvailable ? '#10b981' : '#ef4444'}">
+                                    ${isAvailable ? '✅' : '❌'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                modelsGrid.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Failed to load models:', error);
+            }
+        }
+        
+        function selectModel(modelKey) {
+            currentModel = modelKey;
+            
+            // Update UI
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = document.querySelector(`.model-card[onclick*="${modelKey}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            showToast(`Selected: ${modelKey}`, 'info');
+        }
+        
+        async function generateImage() {
+            const prompt = document.getElementById('prompt').value.trim();
+            if (!prompt) {
+                showToast('Please enter a prompt!', 'error');
+                return;
+            }
+            
+            currentPrompt = prompt;
+            const btn = document.getElementById('generateBtn');
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('noImage').style.display = 'none';
+            document.getElementById('generatedImage').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('regenerateBtn').style.display = 'none';
+            document.getElementById('generationInfo').style.display = 'none';
+            document.getElementById('resultContainer').classList.remove('has-image');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> Generating...';
+            
+            startTimer();
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        model_key: currentModel,
+                        steps: 25
+                    })
+                });
+                
+                stopTimer();
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Generation failed');
+                }
+                
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                currentImageUrl = url;
+                
+                const timeTaken = ((Date.now() - startTime) / 1000).toFixed(1);
+                
+                // Display image
+                document.getElementById('loading').style.display = 'none';
+                const img = document.getElementById('generatedImage');
+                img.src = url;
+                img.style.display = 'block';
+                document.getElementById('resultContainer').classList.add('has-image');
+                
+                document.getElementById('downloadBtn').style.display = 'block';
+                document.getElementById('regenerateBtn').style.display = 'block';
+                
+                // Show generation info
+                document.getElementById('generationInfo').style.display = 'block';
+                document.getElementById('infoDetails').innerHTML = `
+                    <p><strong>Model:</strong> ${currentModel}</p>
+                    <p><strong>Time:</strong> ${timeTaken} seconds</p>
+                    <p><strong>Prompt:</strong> ${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}</p>
+                `;
+                
+                showToast(`✅ Image generated in ${timeTaken} seconds!`, 'success');
+                
+            } catch (error) {
+                stopTimer();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('noImage').style.display = 'block';
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>⚡</span> Generate Image';
+            }
+        }
+        
+        function regenerateImage() {
+            if (currentPrompt) {
+                generateImage();
+            }
+        }
+        
+        function downloadImage() {
+            if (!currentImageUrl) {
+                showToast('No image to download', 'error');
+                return;
+            }
+            
+            const a = document.createElement('a');
+            a.href = currentImageUrl;
+            a.download = `ai_image_${currentModel}_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showToast('Image downloaded!', 'success');
+        }
+    </script>
+</body>
+</html>
