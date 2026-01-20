@@ -1,6 +1,3 @@
-I understand now! You want me to **enhance the existing README file with better formatting using Markdown**, but **without changing the content**. Let me format your existing text to look much better:
-
-```markdown
 # 🎨 AI Image Generator
 
 Create stunning AI-generated images from text descriptions using state-of-the-art models. This web application provides an easy way to generate images through a clean, user-friendly interface.
@@ -23,16 +20,12 @@ Turn your imagination into reality. Simply describe what you want to see, and ou
 - Python 3.8 or newer
 - A free HuggingFace account
 
----
-
 ### 📝 Step 1: Get Your API Key
 
 1. Visit [HuggingFace](https://huggingface.co/settings/tokens)
 2. Sign up for a free account if you don't have one
 3. Create a new access token
 4. Copy the token to use later
-
----
 
 ### ⚙️ Step 2: Set Up the Project
 
@@ -56,8 +49,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
-
 ### 🔑 Step 3: Add Your API Key
 
 Open the `main.py` file and find this line (around line 30):
@@ -68,8 +59,6 @@ HF_TOKEN = "YOUR_HUGGINGFACE_TOKEN_HERE"
 
 Replace `"YOUR_HUGGINGFACE_TOKEN_HERE"` with the token you copied from HuggingFace.
 
----
-
 ### 🚀 Step 4: Run the Application
 
 Start the server with this simple command:
@@ -79,8 +68,6 @@ python main.py
 ```
 
 You'll see some information in your terminal, and if everything is set up correctly, you'll see a message saying the server is ready.
-
----
 
 ### 🌐 Step 5: Open in Your Browser
 
@@ -96,13 +83,10 @@ http://localhost:8000
 ### 👀 First Look
 
 When you open the application, you'll see:
-
 - ✅ Status indicators showing if everything is working
 - 🎯 Two model cards to choose from
 - 📝 A text box for your description
 - ⚡ A generate button
-
----
 
 ### 🖼️ Creating Your First Image
 
@@ -111,8 +95,6 @@ When you open the application, you'll see:
 3. **Click Generate**: The system will start creating your image
 4. **Wait**: Generation takes 10-40 seconds depending on the model
 5. **Save your image**: Once it's ready, download it with the download button
-
----
 
 ### 💡 Tips for Better Images
 
@@ -167,8 +149,6 @@ For automatic reloading when you make changes:
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
----
-
 ### 🌐 Available API Endpoints
 
 | Endpoint | Method | Description |
@@ -177,8 +157,6 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 | `/api/generate` | `POST` | Generate images (send JSON with "prompt" and "model_key") |
 | `/api/status` | `GET` | Check if the system is working |
 | `/api/models` | `GET` | See which models are available |
-
----
 
 ### 📡 Example API Request
 
@@ -201,7 +179,6 @@ This tool makes AI image generation accessible to everyone. Instead of dealing w
 ## 🤝 Contributing
 
 Found a bug or have an idea for improvement? Feel free to:
-
 - 📝 Report issues you encounter
 - 💡 Suggest new features
 - 🔧 Submit improvements through pull requests
@@ -213,4 +190,13 @@ Found a bug or have an idea for improvement? Feel free to:
 Remember that AI image generation uses cloud resources, and free tiers have limits. If you use it extensively, you might need to wait between generations or consider upgrading your HuggingFace account.
 
 Now you're ready to create! Open your browser, type your imagination into words, and watch as AI brings your ideas to life. 🎨✨
-```
+
+---
+
+<div align="center">
+
+### **⭐ Star this repository if you found it useful!**
+
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/ai-image-generator?style=social)](https://github.com/yourusername/ai-image-generator)
+
+</div>
